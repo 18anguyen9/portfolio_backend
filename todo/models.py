@@ -16,3 +16,8 @@ class Todo(models.Model):
 
     def _str_(self):
         return self.title
+class Weekly(models.Model):
+    title = models.CharField(max_length = 120)
+    completed = models.BooleanField(default=False)
+    def _str_(self):
+        return self.title

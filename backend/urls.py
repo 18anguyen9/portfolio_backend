@@ -26,6 +26,7 @@ router.register('todos', views.TodoView, 'todo')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/add/',views.AddTask.as_view(),name='add')
+    path('api/add/',views.AddTask.as_view(),name='add'),
+    path('api/weekly/',views.WeeklyView.as_view(),name='weekly')
     #path('api/tasks/',TodoView.as_view(),name='todotasks')
 ]

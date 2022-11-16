@@ -1,9 +1,9 @@
 from django.shortcuts import render
 
 from rest_framework import viewsets
-from .serializers import TodoSerializer, CreateTask
+from .serializers import TodoSerializer, CreateTask, WeeklySerializer
 from rest_framework.views import APIView
-from .models import Todo
+from .models import Todo, Weekly
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.http import HttpResponse
@@ -16,6 +16,27 @@ class TodoView(viewsets.ModelViewSet):
     
     queryset = Todo.objects.all()
 
+class WeeklyView(APIView):
+    serializer_class = WeeklySerializer
+    def get(self,request):
+        queryset = Weekly.objects.all()
+        serializer  = self.serializer_class(queryset,many=True)
+        return Response(serializer.data)
+    def post(self, request):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            weekly_title = serializer.data['title']
+            weekly_complete = serializer.data['completed']
+            queryset = Weekly.objects.filter(title = weekly_title)
+            if queryset.exists():
+                task = queryset[0]
+                task.title = weekly_title
+                task.completed = weekly_complete
+                task.save(update_fields=(['title','completed']))
+            else:
+                task = Weekly(title=weekly_title,completed=weekly_complete)
+                task.save()
+            return Response(self.serializer_class(task).data)
 
 class AddTask(APIView):
     serializer_class = TodoSerializer
